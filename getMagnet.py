@@ -1,4 +1,6 @@
+#-*- encoding: utf-8 -*- 
 import sys
+import re
 from html.parser import HTMLParser
 import urllib
 import zlib
@@ -52,6 +54,8 @@ def GetFromBTSpread(designation):
 	url=urlbase+designation;
 	response=urllib.request.urlopen(url);
 	html=response.read();
+	print(response.info());
+	
 	if response.info().get('Content-Encoding')=='gzip':
 		html=zlib.decompress(html, 16+zlib.MAX_WBITS);
 	btsmp=BTSMain_Parser();
@@ -60,8 +64,13 @@ def GetFromBTSpread(designation):
 	if len(subpageurl)==0:
 		return designation;
 	html=urllib.request.urlopen(subpageurl).read();
-	btsmp.feed(html.decode());
-	return btsmp.getMagnet();
+	htmlTEXT=html.decode('utf-8');
+	mp=re.compile('magnet\:\?.*</textarea>')
+	magList=mp.findall(htmlTEXT);
+	if len(magList)>0:
+		return magList[0].strip('</textarea>');
+	else:
+		return '';
 
 # for i in range(1,10):
 # 	print(GetFromBTSpread('CWP48'));

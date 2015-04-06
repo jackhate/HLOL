@@ -1,3 +1,4 @@
+#-*- encoding: utf-8 -*- 
 import sys;
 import urllib;
 from html.parser import HTMLParser
